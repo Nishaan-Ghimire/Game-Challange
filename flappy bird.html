@@ -1,0 +1,157 @@
+<html>
+<title>Flappy bird</title>
+<canvas id="canvas" width="400" height="400"></canvas>
+<script>
+var posnX = 20;
+var posnY = 20;
+var speedY = 60;
+var pipeSpeed = 10;
+var pipeX = 380;
+var pipeY = 0;
+var pipewidth1 = 50;
+var pipewidth2 = 50;
+var score = 0;
+var tryScreen = false;
+window.onload = ()=>{
+
+canvas = document.getElementById('canvas');
+canvasContext = canvas.getContext('2d');
+
+//interval for whole background
+setInterval(()=>{
+draw();
+gravity();
+pipe();
+detectCollision();
+
+},100);
+
+//interval to change pipe length
+setInterval(()=>{
+pipelength();
+},3900);
+canvas.addEventListener('mousedown',upthrust,true);
+}
+
+
+
+//include all drawing components
+function draw(){
+
+Rect('black',0,0,canvas.width,canvas.height);
+if(tryScreen){
+
+	 //if try screen will be true it will return function
+
+canvasContext.font = "30px Arial";
+canvasContext.fillStyle = 'white';
+canvasContext.fillText(" TRY AGAIN !!!!", 735, 450);
+canvasContext.fillText("your score is "+ score, 735,500);
+return;	
+}
+circle(posnX, posnY, 10, 0, 2 * Math.PI,'white')
+Rect('white',pipeX,pipeY,20,pipewidth1);
+Rect('white',pipeX,400-pipewidth2,20,pipewidth2);
+
+	canvasContext.font = "15px Arial";
+	canvasContext.fillStyle = 'white';
+	canvasContext.fillText('Player Score', 20 , 20);
+	canvasContext.fillStyle = 'white';
+	canvasContext.fillText(score, 30 , 40);
+
+}
+
+//function to vary pipe length
+function pipelength(){
+
+var pipe_heightCheck = 3*(canvas.height/4);
+pipewidth1 = Math.random()*(canvas.height/2);
+if(pipewidth1 > pipe_heightCheck && pipewidth1 < 1){
+pipewidth1 -= (canvas.height/4);
+}
+if(pipewidth1 > 0 && pipewidth1 < canvas.height/4){
+pipewidth1 += (canvas.height/4);
+}
+
+
+pipewidth2 = Math.random()*(canvas.height/2);
+if(pipewidth2 > pipe_heightCheck && pipewidth2 < 1){
+pipewidth2 -= (canvas.height/4);
+}
+if(pipewidth2 > 0 && pipewidth2 < canvas.height/4){
+pipewidth2 += (canvas.height/4);
+}
+
+
+}
+
+function detectCollision(){
+if((posnY < pipewidth1 || posnY > 400-pipewidth2)&&(posnX > pipeX)){
+
+tryScreen = true;
+sentscore();
+
+score = 0;
+}
+else{
+score += 2;
+}
+}
+
+function sentscore(){
+alert(score);
+
+}
+
+
+//function to maintain pipe speed
+function pipe(){
+pipeX -= pipeSpeed;
+if(pipeX < 0){
+pipeX = 400;
+}
+
+}
+
+//function to provide ball above velocity
+function upthrust(){
+posnY -= speedY;
+if(tryScreen){
+tryScreen = false;
+		
+}
+
+}
+
+
+//function to pull the ball down
+function gravity(){
+posnY += 10;
+if(posnY > canvas.height-10){
+posnY = canvas.height-10;
+
+}
+}
+
+
+
+
+
+
+//function to reduce drawing step
+
+function Rect(color,X,Y,width,height){
+canvasContext.fillStyle = color;
+canvasContext.fillRect(X,Y,width,height);
+}
+
+function circle(X,Y,radius,startang,endang,color){
+canvasContext.beginPath();
+canvasContext.arc(X, Y, radius,startang,endang,color);
+canvasContext.fillStyle = color;
+canvasContext.fill();
+
+}
+
+</script>
+</html>
